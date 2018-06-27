@@ -1,4 +1,4 @@
-package com.edf.arender4edf;
+package com.arondor.arender.edf;
 
 import com.arondor.arender.viewer.common.rest.DocumentServiceRestClient;
 import com.arondor.viewer.client.api.document.DocumentId;

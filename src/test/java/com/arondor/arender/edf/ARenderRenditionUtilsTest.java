@@ -1,4 +1,4 @@
-package com.edf.arender4edf;
+package com.arondor.arender.edf;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
