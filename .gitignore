@@ -1,0 +1,10 @@
+.classpath
+.project
+*.settings
+*.class
+*.log
+.gwt-log
+target
+*~
+.idea/
+*.iml
