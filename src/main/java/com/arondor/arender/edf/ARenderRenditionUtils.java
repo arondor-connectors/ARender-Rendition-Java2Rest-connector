@@ -3,8 +3,10 @@ package com.arondor.arender.edf;
 import com.arondor.arender.viewer.common.rest.DocumentServiceRestClient;
 import com.arondor.viewer.client.api.document.DocumentId;
 import com.arondor.viewer.common.document.id.DocumentIdFactory;
+import com.arondor.viewer.common.documentservice.DocumentServiceDelegateNotAvailable;
 import com.arondor.viewer.rendition.api.document.DocumentAccessorSelector;
 
+import javax.ws.rs.ProcessingException;
 import java.io.InputStream;
 
 /**
@@ -22,16 +24,29 @@ public class ARenderRenditionUtils
      * @return
      */
     public InputStream getPDFDocument(String clientAddress, byte[] documentToConvert, String mimeType,
-            String documentTitle, long contentSize)
+            String documentTitle, long contentSize) throws DocumentServiceDelegateNotAvailable
     {
         InputStream pdfDocument;
+        // Random documentId generation
         DocumentId documentId = DocumentIdFactory.getInstance().generate();
         DocumentServiceRestClient documentServiceRestClient = new DocumentServiceRestClient();
         documentServiceRestClient.setAddress(clientAddress);
         documentServiceRestClient.startLoadPartialDocument(documentId, mimeType, documentTitle, contentSize);
         documentServiceRestClient.loadPartialDocument(documentId, documentToConvert, 0, true);
-        pdfDocument = documentServiceRestClient
-                .getDocumentAccessorContent(documentId, DocumentAccessorSelector.RENDERED);
+        try
+        {
+            pdfDocument = documentServiceRestClient
+                    .getDocumentAccessorContent(documentId, DocumentAccessorSelector.RENDERED);
+        }
+        catch (DocumentServiceDelegateNotAvailable e)
+        {
+            throw new DocumentServiceDelegateNotAvailable("Document conversion failed", e);
+        }
+        catch (ProcessingException e)
+        {
+            throw new DocumentServiceDelegateNotAvailable("Error while contacting Rendition REST service", e);
+        }
+        documentServiceRestClient.evict(documentId);
         return pdfDocument;
 
     }

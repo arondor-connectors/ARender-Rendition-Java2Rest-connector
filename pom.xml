@@ -11,7 +11,7 @@
     <packaging>jar</packaging>
 
     <properties>
-        <arender.version>3.1.11-rc3</arender.version>
+        <arender.version>3.1.11</arender.version>
 
         <junit.version>4.12</junit.version>
         <log4j.version>1.2.16</log4j.version>

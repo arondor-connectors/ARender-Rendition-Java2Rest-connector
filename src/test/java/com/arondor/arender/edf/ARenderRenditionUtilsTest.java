@@ -1,5 +1,6 @@
 package com.arondor.arender.edf;
 
+import com.arondor.viewer.common.documentservice.DocumentServiceDelegateNotAvailable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -19,10 +20,14 @@ import java.io.InputStream;
 public class ARenderRenditionUtilsTest
 {
 
-    private static final String DOC_TEST_PATH = "src/test/resources/documents/";
-    private static final String CONVERTED_DOCUMENTS_TEST_PATH = DOC_TEST_PATH + "converted/";
+    /**
+     * Following test are integration tests. Be sure to have a working rendition server up at the address below.
+     */
+    private static final String RENDITION_CLIENT_ADRESS = "http://localhost:1990/";
 
-    public static final String RENDITION_CLIENT_ADRESS = "http://localhost:1990/";
+    private static final String DOC_TEST_PATH = "src/test/resources/documents/";
+
+    private static final String CONVERTED_DOCUMENTS_TEST_PATH = DOC_TEST_PATH + "converted/";
 
     @BeforeClass
     public static void setUp() throws IOException
@@ -57,15 +62,6 @@ public class ARenderRenditionUtilsTest
         FileUtils.copyInputStreamToFile(pdfDocument, new File(CONVERTED_DOCUMENTS_TEST_PATH + FilenameUtils.getBaseName(fileName) + ".pdf"));
     }
 
-    @Test public void getPDFDocumentFromTIFFZip() throws Exception
-    {
-        String fileName = "arender-tiff-100.tiff.zip";
-        String mimeType = "application/zip";
-        InputStream pdfDocument = doRendition(fileName, mimeType);
-        Assert.assertNotNull(pdfDocument);
-        FileUtils.copyInputStreamToFile(pdfDocument, new File(CONVERTED_DOCUMENTS_TEST_PATH + FilenameUtils.getBaseName(fileName) + ".pdf"));
-    }
-
     @Test(expected = ProcessingException.class) public void getPDFDocumentWrongClient() throws Exception
     {
         String fileName = "AccessiWeb_bonnes_pratiques_pdf_accessibles_5mars2009.doc";
@@ -75,6 +71,27 @@ public class ARenderRenditionUtilsTest
         ARenderRenditionUtils aRenderRenditionUtils = new ARenderRenditionUtils();
         aRenderRenditionUtils
                 .getPDFDocument("http://localhostFAIL:1990/", IOUtils.toByteArray(fileInputStream),"application/msword", fileName, file.length());
+    }
+
+    @Test(expected = DocumentServiceDelegateNotAvailable.class) public void getPDFDocumentFromCorruptedFile() throws Exception
+    {
+        String fileName = "corruptedFile.exe";
+        String mimeType = "application/octet-stream";
+        InputStream pdfDocument = doRendition(fileName, mimeType);
+        Assert.assertNotNull(pdfDocument);
+        FileUtils.copyInputStreamToFile(pdfDocument, new File(CONVERTED_DOCUMENTS_TEST_PATH + FilenameUtils.getBaseName(fileName) + ".pdf"));
+    }
+
+    // Warning : this test will reach the Rendition Timeout dedicated to MS Office conversion.
+    // This timeout is configured in arender-rendition.properties file located in the conf folder of the Rendition
+    // installation, key : parsing.aroms.timeout.
+    @Test(expected = DocumentServiceDelegateNotAvailable.class) public void getPDFDocumentFromWordCorruptedFile() throws Exception
+    {
+        String fileName = "corruptedWordDocument.docm";
+        String mimeType = "application/vnd.ms-word.document.macroEnabled.12";
+        InputStream pdfDocument = doRendition(fileName, mimeType);
+        Assert.assertNotNull(pdfDocument);
+        FileUtils.copyInputStreamToFile(pdfDocument, new File(CONVERTED_DOCUMENTS_TEST_PATH + FilenameUtils.getBaseName(fileName) + ".pdf"));
     }
 
     private InputStream doRendition(String fileName, String mimeType) throws IOException
