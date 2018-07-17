@@ -6,6 +6,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.ProcessingException;
@@ -82,10 +83,10 @@ public class ARenderRenditionUtilsTest
         FileUtils.copyInputStreamToFile(pdfDocument, new File(CONVERTED_DOCUMENTS_TEST_PATH + FilenameUtils.getBaseName(fileName) + ".pdf"));
     }
 
-    // Warning : this test will reach the Rendition Timeout dedicated to MS Office conversion.
-    // This timeout is configured in arender-rendition.properties file located in the conf folder of the Rendition
-    // installation, key : parsing.aroms.timeout.
-    @Test(expected = DocumentServiceDelegateNotAvailable.class) public void getPDFDocumentFromWordCorruptedFile() throws Exception
+    // Careful this test works only with arondor-arender-rendition-aroms2pdf-native-4.0.5.exe and ARender 3.1.11-1
+    @Test
+    @Ignore
+    public void getPDFDocumentFromWordWithMacro() throws Exception
     {
         String fileName = "corruptedWordDocument.docm";
         String mimeType = "application/vnd.ms-word.document.macroEnabled.12";
