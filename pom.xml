@@ -4,10 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.arondor.arender.edf</groupId>
-    <artifactId>arondor-arender-edf-utils</artifactId>
+    <groupId>com.arondor.arender</groupId>
+    <artifactId>arondor-arender-javatorest-sample</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>ARender Rendition Server Utils for EDF</name>
+    <name>ARender Rendition Server JAVA to REST Utils Sample</name>
     <packaging>jar</packaging>
 
     <properties>
