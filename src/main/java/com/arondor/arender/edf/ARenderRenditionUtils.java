@@ -14,6 +14,8 @@ import java.io.InputStream;
  */
 public class ARenderRenditionUtils
 {
+    private static final DocumentServiceRestClient DOCUMENT_SERVICE_REST_CLIENT = new DocumentServiceRestClient();
+
     /**
      * Method to call to fetch the PDF version of a document
      * @param clientAddress: ARender Rendition Adress (default is : http://localhost:1990/)
@@ -29,13 +31,12 @@ public class ARenderRenditionUtils
         InputStream pdfDocument;
         // Random documentId generation
         DocumentId documentId = DocumentIdFactory.getInstance().generate();
-        DocumentServiceRestClient documentServiceRestClient = new DocumentServiceRestClient();
-        documentServiceRestClient.setAddress(clientAddress);
-        documentServiceRestClient.startLoadPartialDocument(documentId, mimeType, documentTitle, contentSize);
-        documentServiceRestClient.loadPartialDocument(documentId, documentToConvert, 0, true);
+        DOCUMENT_SERVICE_REST_CLIENT.setAddress(clientAddress);
+        DOCUMENT_SERVICE_REST_CLIENT.startLoadPartialDocument(documentId, mimeType, documentTitle, contentSize);
+        DOCUMENT_SERVICE_REST_CLIENT.loadPartialDocument(documentId, documentToConvert, 0, true);
         try
         {
-            pdfDocument = documentServiceRestClient
+            pdfDocument = DOCUMENT_SERVICE_REST_CLIENT
                     .getDocumentAccessorContent(documentId, DocumentAccessorSelector.RENDERED);
         }
         catch (DocumentServiceDelegateNotAvailable e)
@@ -46,7 +47,8 @@ public class ARenderRenditionUtils
         {
             throw new DocumentServiceDelegateNotAvailable("Error while contacting Rendition REST service", e);
         }
-        documentServiceRestClient.evict(documentId);
+        // Remove the document from Rendition cache
+        DOCUMENT_SERVICE_REST_CLIENT.evict(documentId);
         return pdfDocument;
 
     }
