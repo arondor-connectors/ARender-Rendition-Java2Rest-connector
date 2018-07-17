@@ -83,18 +83,6 @@ public class ARenderRenditionUtilsTest
         FileUtils.copyInputStreamToFile(pdfDocument, new File(CONVERTED_DOCUMENTS_TEST_PATH + FilenameUtils.getBaseName(fileName) + ".pdf"));
     }
 
-    // Careful this test works only with arondor-arender-rendition-aroms2pdf-native-4.0.5.exe and ARender 3.1.11-1
-    @Test
-    @Ignore
-    public void getPDFDocumentFromWordWithMacro() throws Exception
-    {
-        String fileName = "corruptedWordDocument.docm";
-        String mimeType = "application/vnd.ms-word.document.macroEnabled.12";
-        InputStream pdfDocument = doRendition(fileName, mimeType);
-        Assert.assertNotNull(pdfDocument);
-        FileUtils.copyInputStreamToFile(pdfDocument, new File(CONVERTED_DOCUMENTS_TEST_PATH + FilenameUtils.getBaseName(fileName) + ".pdf"));
-    }
-
     private InputStream doRendition(String fileName, String mimeType) throws IOException
     {
         File file = new File(DOC_TEST_PATH + fileName);
